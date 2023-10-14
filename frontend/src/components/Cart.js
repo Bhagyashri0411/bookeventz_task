@@ -1,22 +1,50 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import shop from "../assets/shop1.webp";
+import axios from "axios";
 
-function Cart({ cart, removeFromCart }) {
+function Cart() {
+
+  const [cart, setCart] = useState([]);
+  
+  const GetItems = () => {
+    axios.get('http://localhost:5000/cart/items')
+      .then((response) => {
+        setCart(response.data);
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+      });
+  };
+
+  useEffect(() => {
+    GetItems()
+  }, []);
+
+  // Function to remove an item from the cart
+  const removeFromCart = (productId) => {
+    axios.post('http://localhost:5000/cart/remove', { id: productId })
+      .then((response) => {
+        GetItems();
+      })
+      .catch((error) => {
+        console.error('Error removing item from the cart:', error);
+      });
+  };
 
   const calculateTotalCost = (cart) => {
 
     let totalCost = 0;
 
     for (const item of cart) {
-      let itemCost = item.price * item.quantity;
+      let itemCost = item.product.price * item.quantity;
 
       if (item.id === 1 && item.quantity >= 3) {
         // discount for Item A when add 3 items 
-        itemCost = Math.floor(item.quantity / 3) * 75 + (item.quantity % 3) * item.price;
+        itemCost = Math.floor(item.quantity / 3) * 75 + (item.quantity % 3) * item.product.price;
       } else if (item.id === 2 && item.quantity >= 2) {
         //  discount for Item B when add 2 items
-        itemCost = Math.floor(item.quantity / 2) * 35 + (item.quantity % 2) * item.price;
+        itemCost = Math.floor(item.quantity / 2) * 35 + (item.quantity % 2) * item.product.price;
       }
 
       totalCost += itemCost;
@@ -33,7 +61,7 @@ function Cart({ cart, removeFromCart }) {
   const totalCost = calculateTotalCost(cart);
 
   // Calculate the total cost of items in the cart
-  const realCost = cart.reduce((total, item) => total + item.price * item.quantity, 0);
+  const realCost = cart.reduce((total, item) => total + item.product.price * item.quantity, 0);
 
   const discountCost = realCost - totalCost;
 
@@ -54,16 +82,16 @@ function Cart({ cart, removeFromCart }) {
                         <div className="d-flex align-items-center">
                           <img src={shop} alt="not found" className="border rounded me-3" style={{ width: '96px', height: '96px' }} />
                           <div className>
-                            <a href="#" className="nav-link">{item.name}</a>
+                            <a href="#" className="nav-link">{item.product.name}</a>
                           </div>
                         </div>
 
                         <div className>
-                          <text className="h6">${item.price} × {item.quantity}</text> <br />
+                          <text className="h6">${item.product.price} × {item.quantity}</text> <br />
                         </div>
                         <div className="float-md-end">
                           <a href="#!" className="btn btn-light border px-2 icon-hover-primary"><i className="fa fa-heart fa-lg px-1 text-secondary" /></a>
-                          <button className="btn btn-light border text-danger icon-hover-danger" onClick={() => removeFromCart(item)}> Remove</button>
+                          <button className="btn btn-light border text-danger icon-hover-danger" onClick={() => removeFromCart(item.id)}> Remove</button>
                         </div>
                       </div>
 

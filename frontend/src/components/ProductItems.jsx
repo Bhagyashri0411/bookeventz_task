@@ -1,14 +1,36 @@
-import React from "react";  
+import React, { useEffect, useState } from "react";
+import axios from "axios"
 import shop from "../assets/shop1.webp";
 
-const ProductItems = ({ addToCart }) => {
-  var items = [
-    { id: 1, name: "Product A", price: 30 },
-    { id: 2, name: "Product B", price: 20 },
-    { id: 3, name: "Product C", price: 50 },
-    { id: 4, name: "Product D", price: 15 },
-  ];
+const ProductItems = () => {
+  const [items, setItems] = useState([]);
+  useEffect(() => {
+    // Fetch get mapping that return all products
+    axios.get('http://localhost:5000/products')
+      .then(response => {
+        setItems(response.data);
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
+  }, []);
 
+
+  // Add to cart Function
+  const addToCart = (product) => {
+    const itemToAdd = { ...product, quantity: 1 };
+
+    // Send a POST request that to add the item to the cart
+    axios.post('http://localhost:5000/cart/add', itemToAdd)
+      .then((response) => {
+        alert(`Items ${itemToAdd.name} added successfully`)
+      })
+      .catch((error) => {
+        console.error('Error adding item to cart:', error);
+      });
+  };
+
+  // End
   return (
     <>
 
@@ -16,7 +38,7 @@ const ProductItems = ({ addToCart }) => {
 
         {items.map((item, key) => (
           <div className="col-lg-3 col-md-6 col-sm-6" key={key}>
-            <div className="card px-4 border shadow-0 mb-4 mb-lg-0">
+            <div className="card px-4 border shadow-0 mb-4 mb-lg-0 py-4">
               <a href="#" className>
                 <img src={shop} alt="not found" className="card-img-top rounded-2" />
               </a>
@@ -31,7 +53,7 @@ const ProductItems = ({ addToCart }) => {
               </div>
             </div>
           </div>))}
-        
+
       </div>
     </>
   )
