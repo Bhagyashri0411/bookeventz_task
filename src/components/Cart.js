@@ -1,6 +1,41 @@
-import { useEffect, useState } from "react";
+import React from "react";
+import { Link } from "react-router-dom";
+import shop from "../assets/shop1.webp";
 
 function Cart({ cart, removeFromCart }) {
+
+  const calculateTotalCost = (cart) => {
+
+    let totalCost = 0;
+
+    for (const item of cart) {
+      let itemCost = item.price * item.quantity;
+
+      if (item.id === 1 && item.quantity >= 3) {
+        // discount for Item A when add 3 items 
+        itemCost = Math.floor(item.quantity / 3) * 75 + (item.quantity % 3) * item.price;
+      } else if (item.id === 2 && item.quantity >= 2) {
+        //  discount for Item B when add 2 items
+        itemCost = Math.floor(item.quantity / 2) * 35 + (item.quantity % 2) * item.price;
+      }
+
+      totalCost += itemCost;
+    }
+
+    // discount if the total cost is over Rs 150
+    if (totalCost > 150) {
+      totalCost -= 20;
+    }
+
+    return totalCost;
+  };
+
+  const totalCost = calculateTotalCost(cart);
+
+  // Calculate the total cost of items in the cart
+  const realCost = cart.reduce((total, item) => total + item.price * item.quantity, 0);
+
+  const discountCost = realCost - totalCost;
 
   return (
     <>
@@ -8,35 +43,30 @@ function Cart({ cart, removeFromCart }) {
         <div className="container">
           <div className="row">
             {/* cart */}
-            <div className="col-lg-12">
+            <div className="col-lg-9">
               <div className="card border shadow-0">
                 <div className="m-4">
                   <h4 className="card-title mb-4">Your shopping cart</h4>
                   {cart.map((item) => (
 
                     <div className="row gy-3 mb-4" key={item.id}>
-                      <div className="col-lg-5">
-                        <div className="me-lg-5">
-                          <div className="d-flex">
-                            <img src="https://bootstrap-ecommerce.com/bootstrap5-ecommerce/images/items/11.webp" className="border rounded me-3" style={{ width: '96px', height: '96px' }} />
-                            <div className>
-                              <a href="#" className="nav-link">{item.name}</a>
-                            </div>
+                      <div className="d-flex align-items-center justify-content-between">
+                        <div className="d-flex align-items-center">
+                          <img src={shop} alt="not found" className="border rounded me-3" style={{ width: '96px', height: '96px' }} />
+                          <div className>
+                            <a href="#" className="nav-link">{item.name}</a>
                           </div>
                         </div>
-                      </div>
-                      <div className="col-lg-2 col-sm-6 col-6 d-flex flex-row flex-lg-column flex-xl-row text-nowrap">
 
                         <div className>
                           <text className="h6">${item.price} × {item.quantity}</text> <br />
                         </div>
-                      </div>
-                      <div className="col-lg col-sm-6 d-flex justify-content-sm-center justify-content-md-start justify-content-lg-center justify-content-xl-end mb-2">
                         <div className="float-md-end">
                           <a href="#!" className="btn btn-light border px-2 icon-hover-primary"><i className="fa fa-heart fa-lg px-1 text-secondary" /></a>
                           <button className="btn btn-light border text-danger icon-hover-danger" onClick={() => removeFromCart(item)}> Remove</button>
                         </div>
                       </div>
+
                     </div>
                   ))}
 
@@ -44,7 +74,35 @@ function Cart({ cart, removeFromCart }) {
 
               </div>
             </div>
-       
+
+
+            {/* cart */}
+            {/* summary */}
+            <div className="col-lg-3">
+
+              <div className="card shadow-0 border">
+                <div className="card-body">
+                  <div className="d-flex justify-content-between">
+                    <p className="mb-2">Real price:</p>
+                    <p className="mb-2">${realCost}</p>
+                  </div>
+                  <div className="d-flex justify-content-between">
+                    <p className="mb-2">Discount:</p>
+                    <p className="mb-2 text-success">-${discountCost}</p>
+                  </div>
+                  <hr />
+                  <div className="d-flex justify-content-between">
+                    <p className="mb-2">Total price:</p>
+                    <p className="mb-2 fw-bold">${totalCost} </p>
+                  </div>
+                  <div className="mt-3">
+                    <a href="#" className="btn btn-success w-100 shadow-0 mb-2"> Buy Now </a>
+                    <Link to="/" className="btn btn-light w-100 border mt-2"> Back to shop </Link>
+                  </div>
+                </div>
+              </div>
+            </div>
+            {/* summary */}
           </div>
         </div>
       </section>

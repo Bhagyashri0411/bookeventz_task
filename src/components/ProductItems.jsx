@@ -1,3 +1,6 @@
+import React from "react";  
+import shop from "../assets/shop1.webp";
+
 const ProductItems = ({ addToCart }) => {
   var items = [
     { id: 1, name: "Product A", price: 30 },
@@ -5,8 +8,6 @@ const ProductItems = ({ addToCart }) => {
     { id: 3, name: "Product C", price: 50 },
     { id: 4, name: "Product D", price: 15 },
   ];
-
-
 
   return (
     <>
@@ -17,7 +18,7 @@ const ProductItems = ({ addToCart }) => {
           <div className="col-lg-3 col-md-6 col-sm-6" key={key}>
             <div className="card px-4 border shadow-0 mb-4 mb-lg-0">
               <a href="#" className>
-                <img src="https://bootstrap-ecommerce.com/bootstrap5-ecommerce/images/items/5.webp" className="card-img-top rounded-2" />
+                <img src={shop} alt="not found" className="card-img-top rounded-2" />
               </a>
               <div className="card-body d-flex flex-column pt-3 border-top">
                 <a href="#" className="nav-link">{item.name}</a>
