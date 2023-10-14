@@ -14,7 +14,7 @@ app.use(bodyParser.json());
 app.use('/products', productRoutes);
 app.use('/cart', cartRoutes);
 
-const PORT = process.env.PORT || 5000;
+const PORT =  5000;
 
 // Check db is connected or not
 db.sync()
